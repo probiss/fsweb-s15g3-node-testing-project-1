@@ -8,6 +8,10 @@
  */
 function nesneyiTrimle(obj) {
   // ✨ kodlar buraya
+  for(let i in obj){
+    if(typeof obj[i]=='string')
+    obj[i] = obj[i].trim()
+  }
 }
 
 /**
@@ -20,6 +24,8 @@ function nesneyiTrimle(obj) {
  */
 function verileniTrimle(obj, prop) {
   // ✨ kodlar buraya
+  if(typeof obj[prop] === 'string')
+  obj[prop] = obj[prop].trim();
 }
 
 /**
@@ -32,6 +38,13 @@ function verileniTrimle(obj, prop) {
  */
 function enBuyukTamsayiyiBul(tamsayilar) {
   // ✨ kodlar buraya
+  let enbuyukSayi = 0;
+  for (let i=0; i<tamsayilar.length;i++){
+    const element = tamsayilar[i];
+    if(element.tamsayi > enbuyukSayi)
+    enbuyukSayi = element.tamsayi;
+  }
+  return enbuyukSayi;
 }
 
 function Sayici(ilkSayi) {
@@ -57,6 +70,9 @@ function Sayici(ilkSayi) {
    */
   this.asagiSay = () => {
     // ✨ kodlar buraya
+    let sayac = ilkSayi;
+    this.asagiSay = () => {
+      return sayac == 0 ? 0 : sayac--;
   }
 }
 
@@ -79,12 +95,16 @@ function Mevsimler() {
    * mevsimler.sonraki() // "ilkbahar" döndürür
    * mevsimler.sonraki() // "yaz" döndürür
    */
-  this.sonraki = () => {
+  let mevsimler = ["ilkbahar","yaz","sonbahar","kış"];
+  let index = 0;
+    this.sonraki = () => {
     // ✨ kodlar buraya
+    index = (index+1) %mevsimler.length;
+    return mevsimler[index];
   }
 }
 
-function Araba(/*kodlar buraya */) {
+function Araba(/*kodlar buraya */ isim,depoBenzin,kml) {
   /**
    * [Görev 6A] Araba 3 argüman alarak bir araba nesnesi oluşturur
    * @param {string} isim - arabanın ismi
@@ -92,8 +112,12 @@ function Araba(/*kodlar buraya */) {
    * @param {number} kml - arabanın litre başına kat edebileceği km yol
    */
  
-    this.odometer = 0 // araba 0 kilometrede yüklenecek
-    this.depo = depoBenzin // araba full depoyla yüklenecek
+  this.odometer = 0; // araba 0 kilometrede yüklenecek
+  this.depo = depoBenzin; // araba full depoyla yüklenecek
+  this.isim = isim;
+  this.kml = kml;
+  this.maxDepo = depoBenzin;
+
     // ✨ gerekli propları ekleyin
 
   
@@ -112,7 +136,15 @@ function Araba(/*kodlar buraya */) {
    * focus.sur(200) // 600 döndürür (100 km sonra benzin bitti)
    */
   this.sur = (gidilecekyol) => {
-    // ✨ kodlar buraya
+    let maxGidilecekYol = this.depo * this.kml;
+    if (gidilecekyol <= maxGidilecekYol) {
+      this.odometer = this.odometer + gidilecekyol;
+      this.depo = this.depo - gidilecekyol / this.kml; //harcadığımız yakıt miktarı
+      return this.odometer;
+    }
+    this.depo = 0;
+    this.odometer += maxGidilecekYol;
+    return this.odometer;
   }
 
   /**
@@ -126,8 +158,21 @@ function Araba(/*kodlar buraya */) {
    * focus.sur(1) // 600 döndürür (depo boş olduğundan yol gidilemedi)
    * focus.benzinal(99) // 600 döndürür (depo yalnızca 20 litre alabiliyor)
    */
-  this.benzinal = (litre) => {
-    // ✨ kodlar buraya
+    this.benzinal = (litre) => {
+      // ✨ kodlar buraya
+      let kalanDepoKapasitesi = this.maxDepo - this.depo;
+      let gidilebilecekKm;
+      if (litre <= kalanDepoKapasitesi) {
+        this.depo = this.depo + litre;
+        gidilebilecekKm = this.depo * this.kml;
+        return gidilebilecekKm;
+      }
+      // console.log(
+      //   `en fazla ${this.depo} litre alabiliyor. KalanDepo:${kalanDepoKapasitesi}`
+      // );
+      this.depo = this.maxDepo;
+      return this.depo * this.kml;
+    };
   }
 }
 
@@ -145,7 +190,9 @@ function Araba(/*kodlar buraya */) {
  * })
  */
 function asenkronCiftSayi(sayi) {
-  // ✨ implement
+  return new Promise((res) => {
+    res(sayi % 2 == 0);
+  });
 }
 
 module.exports = {
